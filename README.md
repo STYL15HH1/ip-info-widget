@@ -1,22 +1,45 @@
 # IP Info Widget
 
-A lightweight Windows widget that shows your public IP address and connection location.
+IP Info Widget is a lightweight Windows desktop widget that keeps your current public IP address and approximate connection location visible at a glance. It is especially useful when you frequently switch VPN servers and want a simple, persistent confirmation that your public IP and exit location have actually changed.
+
+The widget refreshes in the background every five seconds by default. When your public IP changes, it records the change and can show a Windows notification, making it easy to spot a successful VPN reconnection or an unexpected change in your public route.
+
+## Screenshots
+
+| VPN exit locations | Widget controls |
+| --- | --- |
+| ![Widget showing a Poland connection](docs/screenshots/widget-poland.png) ![Widget showing a Romania connection](docs/screenshots/widget-romania.png) | ![Right-click context menu](docs/screenshots/context-menu.png) |
+| ![Widget showing a Switzerland connection](docs/screenshots/widget-switzerland.png) ![Widget showing a United States connection](docs/screenshots/widget-united-states.png) | ![Settings window](docs/screenshots/settings.png) |
 
 ## Features
 
-- Retrieves connection data securely over HTTPS.
-- Shows the public IP, country, a local PNG flag, and optionally the city and internet provider.
-- Includes light and dark themes, adjustable opacity, and remembers its position.
-- Checks for public IP changes every 5 seconds by default, making VPN server changes visible quickly.
-- Displays a Windows notification and saves an IP change history with the old and new IP address, country, and time.
-- Copies the IP address to the clipboard when you click it.
-- Can be pinned to a selected monitor in a multi-display setup.
-- Tests internet access and shows ping latency for a selected host.
-- Supports automatic ping checks or a manual connection test from the menu.
-- Lets you turn off the always-on-top behavior in Settings.
+- Retrieves public-IP and location data securely over HTTPS.
+- Shows the public IP address, country, ISO country code, city, and a local country flag without downloading flag images at runtime.
+- Monitors for IP changes every 5 seconds by default, with a configurable refresh interval from 5 seconds to 24 hours.
+- Saves up to 50 IP changes with the old and new address, country, and timestamp; the history is available from the right-click menu.
+- Shows a Windows notification when the public IP changes.
+- Copies the current IP address to the clipboard with one click.
+- Keeps the widget above other applications when desired—ideal for VPN monitoring—or lets it behave like a regular window.
+- Supports light and dark themes, adjustable opacity, and remembers the widget position.
+- Can be pinned to a specific monitor in a multi-display workspace.
+- Includes an optional ping test for a chosen host, available on every refresh or on demand from the menu.
 - Can start automatically when you sign in to Windows.
-- Provides a right-click menu with Settings, history, refresh, and exit actions.
-- Uses an English interface and English installer.
+- Provides a compact right-click menu for refresh, connection testing, hiding the widget, viewing history, opening settings, and quitting.
+
+## Settings
+
+| Option | Description |
+| --- | --- |
+| **Theme** | Select the Dark or Light appearance. |
+| **Refresh interval (sec)** | Choose how often the public IP data is checked. The minimum is 5 seconds. |
+| **Opacity** | Adjust widget transparency from 55% to 100%. |
+| **Show city** | Display the detected city beneath the IP address. |
+| **Show internet provider** | Display the ISP reported by the IP lookup service. |
+| **Pin to monitor** | Keep the widget on a selected display in a multi-monitor setup. |
+| **Ping host** | Set the host used for the optional connectivity test; `1.1.1.1` is the default. |
+| **Test ping on every refresh** | Run the selected ping check whenever the widget updates. |
+| **Start widget with Windows** | Launch the widget automatically after you sign in to Windows. |
+| **Always on top of other apps** | Keep the widget visible above other windows, or turn it off when you prefer it to be covered normally. |
 
 ## Run from source
 
