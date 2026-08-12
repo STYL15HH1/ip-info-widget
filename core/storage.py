@@ -45,6 +45,10 @@ class AppPaths:
     def app_icon_path(self) -> Path:
         return self.resource_dir / "assets" / "icons" / "ip-info-widget.ico"
 
+    @property
+    def author_image_path(self) -> Path:
+        return self.resource_dir / "assets" / "author" / "styl15hh1.png"
+
     def ensure_data_directories(self) -> None:
         self.settings_path.parent.mkdir(parents=True, exist_ok=True)
         self.history_path.parent.mkdir(parents=True, exist_ok=True)

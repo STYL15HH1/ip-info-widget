@@ -1,20 +1,21 @@
 # Changelog
 
-## v2.0.0 - 2026-08-12
+## v1.5.0 - 2026-08-12
 
 ### Added
 
-- Dynamic native Windows taskbar icon using the current country flag.
+- Dynamic native Windows and notification-area icons using the current country flag.
 - Explicit `--portable` mode with local `config/` and `history/` folders.
 - Compact, Normal, and Monitoring widget layouts.
 - Modular `core`, `ui`, and `windows` application layers.
 - Architecture documentation for future contributors.
+- A themed About window with application version, author identity, GitHub link, MIT license, and author avatar.
 
 ### Changed
 
 - Settings are versioned and migrate existing values without discarding them.
 - The portable settings dialog disables Windows autostart safely.
-- The installer and build output target version 2.0.0.
+- The installer and build output target version 1.5.0.
 
 ## v1.4.1 - 2026-08-10
 

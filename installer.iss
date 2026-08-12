@@ -2,9 +2,13 @@
 ; Najpierw uruchom build_exe.bat, który utworzy dist\MyIPWidget.exe.
 
 #define MyAppName "IP Info Widget"
-#define MyAppVersion "2.0.0"
+; build_exe.bat forwards core.version.APP_VERSION to this script.
+; The fallback permits a direct compile when Python is unavailable.
+#ifndef MyAppVersion
+  #define MyAppVersion "1.5.0"
+#endif
 #define MyAppPublisher "IP Info Widget"
-#define MyAppExeName "IPInfoWidget.exe"
+#define MyAppExeName "IPInfoWidget-" + MyAppVersion + ".exe"
 
 #ifndef BuildDir
   #define BuildDir "dist"

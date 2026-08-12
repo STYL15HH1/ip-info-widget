@@ -10,6 +10,7 @@ from urllib.error import URLError
 from urllib.request import Request, urlopen
 
 from core.models import IPInfo, PingResult
+from core.version import APP_VERSION
 
 
 class IPServiceError(RuntimeError):
@@ -22,7 +23,7 @@ class IPService:
     def fetch_public_ip(self) -> IPInfo:
         request = Request(
             f"{self.endpoint}?_={time.time_ns()}",
-            headers={"User-Agent": "IPInfoWidget/2.0", "Cache-Control": "no-cache"},
+            headers={"User-Agent": f"IPInfoWidget/{APP_VERSION}", "Cache-Control": "no-cache"},
         )
         try:
             with urlopen(request, timeout=8) as response:

@@ -11,8 +11,21 @@ from PIL import Image
 WM_SETICON = 0x0080
 ICON_SMALL = 0
 ICON_BIG = 1
+GCLP_HICON = -14
+GCLP_HICONSM = -34
 BI_RGB = 0
 DIB_RGB_COLORS = 0
+APP_USER_MODEL_ID = "STYL15HH1.IPInfoWidget"
+
+
+def set_process_app_user_model_id() -> None:
+    """Set a stable taskbar identity before Tk creates the top-level window."""
+    if not hasattr(ctypes, "windll"):
+        return
+    try:
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
+    except (AttributeError, OSError):
+        pass
 
 
 class BITMAPINFOHEADER(ctypes.Structure):
@@ -46,6 +59,8 @@ class TaskbarIcon:
                 self.gdi32 = ctypes.windll.gdi32
                 self.user32.SendMessageW.argtypes = [wintypes.HWND, wintypes.UINT, wintypes.WPARAM, wintypes.LPARAM]
                 self.user32.SendMessageW.restype = ctypes.c_ssize_t
+                self.user32.SetClassLongPtrW.argtypes = [wintypes.HWND, ctypes.c_int, ctypes.c_ssize_t]
+                self.user32.SetClassLongPtrW.restype = ctypes.c_ssize_t
                 self.user32.DestroyIcon.argtypes = [ctypes.c_void_p]
                 self.user32.DestroyIcon.restype = wintypes.BOOL
                 self.user32.CreateIconIndirect.argtypes = [ctypes.POINTER(ICONINFO)]
@@ -55,7 +70,7 @@ class TaskbarIcon:
                 self.gdi32.CreateBitmap.restype = ctypes.c_void_p
                 self.gdi32.DeleteObject.argtypes = [ctypes.c_void_p]
                 self.gdi32.DeleteObject.restype = wintypes.BOOL
-                ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("IPInfoWidget")
+                set_process_app_user_model_id()
             except (AttributeError, OSError):
                 self.available = False
 
@@ -66,6 +81,11 @@ class TaskbarIcon:
         if not handle:
             return
         hwnd = self.root.winfo_id()
+        # Tkinter's borderless window is drawn from a window class. Explorer can
+        # read that class icon instead of the icon set by WM_SETICON, so update
+        # both sources on every country change.
+        self.user32.SetClassLongPtrW(hwnd, GCLP_HICON, handle)
+        self.user32.SetClassLongPtrW(hwnd, GCLP_HICONSM, handle)
         self.user32.SendMessageW(hwnd, WM_SETICON, ICON_SMALL, handle)
         self.user32.SendMessageW(hwnd, WM_SETICON, ICON_BIG, handle)
         self._destroy_current()
@@ -76,6 +96,8 @@ class TaskbarIcon:
         if not self.available:
             return
         hwnd = self.root.winfo_id()
+        self.user32.SetClassLongPtrW(hwnd, GCLP_HICON, 0)
+        self.user32.SetClassLongPtrW(hwnd, GCLP_HICONSM, 0)
         self.user32.SendMessageW(hwnd, WM_SETICON, ICON_SMALL, 0)
         self.user32.SendMessageW(hwnd, WM_SETICON, ICON_BIG, 0)
         self._destroy_current()

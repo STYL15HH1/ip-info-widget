@@ -23,10 +23,12 @@ from core.ip_monitor import IPMonitor
 from core.ip_service import IPService
 from core.settings import SettingsManager
 from core.storage import AppPaths, portable_requested
+from windows.taskbar import set_process_app_user_model_id
 from ui.widget import IPInfoWidget
 
 
 def main() -> None:
+    set_process_app_user_model_id()
     paths = AppPaths(portable_requested())
     paths.ensure_data_directories()
     settings = SettingsManager(paths)

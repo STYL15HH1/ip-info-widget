@@ -1,4 +1,4 @@
-"""Optional system-tray integration; it deliberately uses the app icon, not flags."""
+"""Optional system-tray integration with a country-flag status icon."""
 
 from __future__ import annotations
 
@@ -48,9 +48,16 @@ class TrayController:
             pystray.MenuItem("Quit", lambda *_: self._callbacks["quit"]()),
         )
 
-    def set_ip(self, ip: str | None) -> None:
+    def set_ip(self, ip: str | None, country_flag: Image.Image | None = None) -> None:
+        """Show the current country in the notification area after a successful lookup.
+
+        The static application icon remains the fallback before the first lookup,
+        on an API error, or when an asset for the returned country is missing.
+        """
         if self.icon is not None:
-            self.icon.icon = self._image
+            icon_image = country_flag.copy() if country_flag is not None else self._image
+            icon_image.thumbnail((64, 64), Image.Resampling.LANCZOS)
+            self.icon.icon = icon_image
             self.icon.title = f"{self.app_name} — {ip or ''}".rstrip(" —")
 
     def stop(self) -> None:

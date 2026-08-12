@@ -17,6 +17,8 @@ from core.ip_monitor import IPMonitor
 from core.models import PingResult, RefreshResult
 from core.settings import SettingsManager
 from core.storage import AppPaths
+from core.version import APP_VERSION
+from ui.about_window import AboutWindow
 from ui.history_window import open_history_window
 from ui.layouts import DisplayData, Theme, WidgetLayout, create_layout
 from ui.menu import build_context_menu
@@ -66,15 +68,17 @@ class IPInfoWidget:
         self.layout: WidgetLayout | None = None
         self.display_data = DisplayData(country="Loading…", ip="Retrieving public IP…", flag_text="IP")
         self.flag_photo: ImageTk.PhotoImage | None = None
+        self.current_country_flag: Image.Image | None = None
         self._drag_offset: tuple[int, int] | None = None
         self._queue: queue.Queue[tuple[str, object]] = queue.Queue()
         self._refresh_in_progress = False
         self._closed = False
         self._after_refresh: str | None = None
         self._last_result: RefreshResult | None = None
+        self._about_window: AboutWindow | None = None
         self.context_menu = build_context_menu(
             self.root, self.refresh_now, self.test_connection_now, self.hide,
-            self.show_history, self.open_settings, self.quit,
+            self.show_history, self.open_settings, self.open_about, self.quit,
         )
         self.tray = TrayController(
             APP_NAME, self.paths.app_icon_path,
@@ -222,7 +226,7 @@ class IPInfoWidget:
             isp=info.isp if self.settings.data.get("show_isp") else "",
             ping_text=ping_text, flag_text=info.country_code.upper(),
         ), country_code=info.country_code)
-        self.tray.set_ip(info.ip)
+        self.tray.set_ip(info.ip, self.current_country_flag)
         if result.change is not None:
             send_ip_change_notification(APP_NAME, result.change)
         self.schedule_next_refresh()
@@ -244,14 +248,19 @@ class IPInfoWidget:
         self.display_data = data
         flag = self.load_flag(country_code) if country_code else None
         if flag is not None:
+            self.current_country_flag = flag
             preview_size = (30, 22) if self.settings.data.get("display_mode") == "compact" else (52, 39)
             preview = flag.copy()
             preview.thumbnail(preview_size, Image.Resampling.LANCZOS)
             self.flag_photo = ImageTk.PhotoImage(preview)
             data.flag_image = self.flag_photo
+            # Tk's native window icon is a separate fallback path used by some
+            # Explorer taskbar configurations; retain the PhotoImage reference.
+            self.root.iconphoto(False, self.flag_photo)
             if update_taskbar and country_code:
                 self.taskbar.set_image(f"country:{country_code.lower()}", flag)
         elif country_code and update_taskbar and self.app_icon_image is not None:
+            self.current_country_flag = None
             # Missing local flag: use the normal application icon instead.
             self.taskbar.set_image("app", self.app_icon_image)
         if self.layout is not None:
@@ -309,6 +318,15 @@ class IPInfoWidget:
 
     def show_history(self) -> None:
         open_history_window(self.root, self.monitor.history)
+
+    def open_about(self) -> None:
+        if self._about_window is not None and self._about_window.dialog.winfo_exists():
+            self._about_window.focus()
+            return
+        self._about_window = AboutWindow(
+            self.root, APP_VERSION, self.theme, self.paths.app_icon_path,
+            self.paths.author_image_path, lambda: setattr(self, "_about_window", None),
+        )
 
     def show(self) -> None:
         self.root.deiconify()

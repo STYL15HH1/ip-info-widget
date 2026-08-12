@@ -1,10 +1,11 @@
-# IP Info Widget 2.0 Architecture
+# IP Info Widget 1.5 Architecture
 
 ## Project map
 
 ```text
 app.py                 Bootstrap and PyInstaller Tcl/Tk setup
 core/
+  version.py           Canonical application version (`APP_VERSION`)
   models.py            Immutable IP, ping, refresh, and IP-change data
   storage.py           Normal and portable data/resource paths
   settings.py          Versioned settings, defaults, validation, persistence
@@ -12,6 +13,7 @@ core/
   ip_service.py        HTTPS public-IP lookup and Windows ping
   ip_monitor.py        Current-IP state and change detection
 ui/
+  about_window.py      Themed single-instance About dialog
   widget.py            Tk main window, state rendering, refresh coordination
   layouts.py           Compact, Normal, and Monitoring widgets
   settings_window.py   Settings dialog
@@ -47,6 +49,10 @@ The widget controller owns the rendered state: current `DisplayData`, the latest
 The monitor owns only the prior IP used for reliable change detection. This keeps
 country, ping, and UI state from being duplicated across the layout classes.
 
+`core.version.APP_VERSION` is the canonical application version consumed by the
+About window. Release and installer metadata should be updated to this same value
+when preparing a new release.
+
 ## Storage
 
 `AppPaths` is the single storage decision point.
@@ -78,7 +84,8 @@ the controller.
 The application icon, tray icon, and taskbar icon are intentionally separate.
 
 - EXE/installer/shortcut: `assets/icons/ip-info-widget.ico`.
-- Tray: a static copy of the application icon (`TrayController`).
+- Tray: the current country flag after a successful lookup, otherwise the
+  application icon (`TrayController`).
 - Taskbar: a process AppUserModelID and `WM_SETICON` messages set a native HICON
   created from the selected flag (`TaskbarIcon`).
 

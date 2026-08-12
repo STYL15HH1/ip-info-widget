@@ -1,81 +1,125 @@
 # IP Info Widget
 
-IP Info Widget is a small Windows desktop widget that keeps your current public
-IP address and approximate exit location visible at a glance. It is useful for
-people who often change VPN servers and want a persistent, uncomplicated way
-to verify that their public IP and country have really changed.
+**IP Info Widget** is a compact Windows utility that continuously shows the
+public IP address currently visible on the internet, together with its country,
+city, and optional provider. It is designed especially for VPN users: switch a
+server and immediately see the new public exit address, country flag, and IP
+change history without opening a browser.
 
-The application queries [ipwho.is](https://ipwho.is/) over HTTPS. It refreshes
-every 5 seconds by default, keeps a local change history, and can display a
-Windows notification when the public IP changes.
+The application uses the HTTPS API at [ipwho.is](https://ipwho.is/) for public
+IP and approximate location data. Country flags are bundled locally, so no flag
+images are downloaded while the widget is running.
 
 ## Screenshots
 
-| VPN exit locations | Widget controls |
+| Widget and country flags | Controls and history |
 | --- | --- |
-| ![Widget showing a Poland connection](docs/screenshots/widget-poland.png) ![Widget showing a Romania connection](docs/screenshots/widget-romania.png) | ![Right-click context menu](docs/screenshots/context-menu.png) |
-| ![Widget showing a Switzerland connection](docs/screenshots/widget-switzerland.png) ![Widget showing a United States connection](docs/screenshots/widget-united-states.png) | ![Settings window](docs/screenshots/settings.png) |
+| ![Widget showing a Poland connection](docs/screenshots/widget-poland.png) ![Widget showing a Romania connection](docs/screenshots/widget-romania.png) ![Widget showing a United States connection](docs/screenshots/widget-united-states.png) | ![Settings window](docs/screenshots/settings.png) ![Right-click context menu](docs/screenshots/context-menu.png) |
 
-## Features
+## What it does
 
-- Public IPv4 address, country, ISO code, city, ISP, and bundled country flags.
-- Dynamic **taskbar** icon: after a successful lookup it changes to the current
-  country's flag. The system-tray icon intentionally remains the IP Info Widget
-  application icon.
-- IP change detection, Windows notifications, and a local history of the last
-  50 changes.
-- One-click IP copying, manual refresh, and an optional Windows ping check.
-- Compact, Normal, and Monitoring layouts. Normal is the default.
-- Dark/light themes, 55–100% opacity, draggable position, multi-monitor pinning,
-  optional always-on-top behavior, and optional Windows sign-in startup.
-- `--portable` mode, which keeps settings and history beside the executable.
+- Shows the current public IP, country, ISO country code, local country flag,
+  city, and optional internet provider.
+- Refreshes automatically every 5 seconds by default; the interval can be set
+  from 5 seconds to 24 hours.
+- Detects every public-IP change, keeps the last 50 changes locally, and can
+  send a Windows notification when an address changes.
+- Updates the window, taskbar, and notification-area icon to the flag of the
+  current country after a successful lookup.
+- Lets you copy the visible IP with one click.
+- Includes a manual refresh and an optional Windows ping check for a host of
+  your choice.
+- Runs quietly in the notification area; its menu can show/hide the widget,
+  refresh data, test connectivity, open history/settings/About, or quit.
 
 ## Display modes
 
-| Mode | Visible information |
-| --- | --- |
-| **Compact** | Country flag and public IP only. |
-| **Normal** | Country, ISO code, flag, IP, and optional city/ISP. |
-| **Monitoring** | Normal essentials plus city, ISP, and the real ping result when a ping has been run. It deliberately does not claim VPN, IPv6, or DNS status. |
+Choose a layout in **Settings → Display mode**. Changing it is immediate and
+keeps your theme, opacity, position, and monitor selection.
 
-Switch the mode in **Settings → Display mode**. The change is immediate and
-the current window position, theme, opacity, and selected monitor are retained.
+| Mode | Best for | Information shown |
+| --- | --- | --- |
+| **Compact** | Minimal desktop use | Flag and public IP only. |
+| **Normal** | Everyday VPN checks | Country, ISO code, flag, IP, and optional city/provider. |
+| **Monitoring** | Persistent connection monitoring | Normal information plus city, provider, and the actual result of the latest ping test. |
+
+Monitoring mode intentionally does **not** claim unsupported VPN, IPv6, or DNS
+status. It only displays information the application has actually retrieved.
 
 ## Settings
 
 | Option | Description |
 | --- | --- |
-| Display mode | Choose Compact, Normal, or Monitoring. |
-| Theme / Opacity | Select Dark or Light and set 55–100% opacity. |
-| Refresh interval | Check the public IP every 5 seconds to 24 hours. |
-| Show city / provider | Control the details in the normal layout. |
-| Pin to monitor | Keep the widget in the work area of a chosen display. |
-| Ping host / Test ping | Choose an optional connectivity target and run it automatically or from the menu. |
-| Start with Windows | Create a current-user Windows startup entry (normal mode only). |
-| Always on top | Keep the widget over other windows, or let it be covered normally. |
+| **Display mode** | Switch between Compact, Normal, and Monitoring. |
+| **Theme** | Use the Dark or Light interface. |
+| **Refresh interval** | Choose how frequently the public IP is checked. |
+| **Opacity** | Set widget transparency from 55% to 100%. |
+| **Show city** | Show or hide the detected city. |
+| **Show internet provider** | Show or hide the ISP returned by the IP service. |
+| **Pin to monitor** | Keep the widget in the work area of a selected display. |
+| **Ping host** | Set the host used by the connectivity test; `1.1.1.1` is the default. |
+| **Test ping on every refresh** | Automatically run the selected ping with every data update. |
+| **Start widget with Windows** | Start automatically after signing in to Windows. |
+| **Always on top** | Keep the widget above other windows, or allow it to be covered normally. |
+
+The widget can be dragged to any position. Its position, appearance, display
+mode, refresh preferences, and history are saved automatically.
+
+## IP history and notifications
+
+When the public address changes, the program records the old IP, new IP,
+country, and local timestamp. Open **IP change history** from the right-click
+menu to review the latest 50 events or clear the history. Windows toast
+notifications are sent when supported by the system.
+
+## Country icon behavior
+
+At startup the app uses its regular blue IP Info Widget icon. Once a lookup
+succeeds, the flag for the detected country becomes the icon associated with the
+running widget in the Windows taskbar and notification area. If the lookup fails
+the last valid flag remains; if a local flag asset is unavailable, the standard
+application icon is used as a safe fallback.
+
+Windows may cache icons for old pinned shortcuts. If a pinned icon does not
+refresh, unpin the old shortcut and start the new executable again.
+
+## About
+
+The **About** item in the widget menu opens a themed dialog with the current
+version, author attribution for [STYL15HH1](https://github.com/STYL15HH1), a
+link to this repository, and MIT license information.
 
 ## Portable mode
 
-Run either the source application or the packaged executable with `--portable`:
+The standard installed application stores settings and history under:
 
 ```text
-python app.py --portable
-IPInfoWidget.exe --portable
+%LOCALAPPDATA%\MyIPWidget
 ```
 
-Portable mode writes no settings or history to `%LOCALAPPDATA%`. Instead it
-creates these folders next to the application:
+For a self-contained copy, run the executable with `--portable`:
+
+```text
+IPInfoWidget-1.5.0.exe --portable
+```
+
+It creates data beside the executable instead:
 
 ```text
 IP Info Widget/
-├── IPInfoWidget.exe
+├── IPInfoWidget-1.5.0.exe
 ├── config/settings.json
 └── history/ip-history.json
 ```
 
-Windows autostart is disabled in portable mode because a USB drive letter may
-change and would leave an invalid startup entry. Normal installed mode remains
-unchanged and stores data in `%LOCALAPPDATA%\MyIPWidget`.
+Autostart is deliberately disabled in portable mode because a removable drive
+letter can change.
+
+## Download and run
+
+Download the versioned executable from the project's GitHub Releases page. No
+Python installation is required. Run the EXE directly, or add `--portable` for
+self-contained configuration and history.
 
 ## Run from source
 
@@ -84,29 +128,27 @@ unchanged and stores data in `%LOCALAPPDATA%\MyIPWidget`.
 3. Run `python -m pip install -r requirements.txt`.
 4. Run `python app.py` or `python app.py --portable`.
 
-## Build the installer
+## Build
 
 Install [Inno Setup](https://jrsoftware.org/isdl.php), then run `build_exe.bat`.
-It installs the build dependencies, creates `dist/IPInfoWidget.exe`, and builds
-`installer/IPInfoWidget-Setup-2.0.0.exe`. End users only need the installer.
+The script reads the version from `core/version.py`, creates a versioned
+standalone EXE such as `dist/IPInfoWidget-1.5.0.exe`, and then creates the
+matching installer `installer/IPInfoWidget-Setup-1.5.0.exe`.
 
-The executable includes the application icon and all 252 local country flags.
-The packaged file initially uses the regular application icon; the window's
-native taskbar icon changes to a country flag after the first successful lookup.
-Windows can cache icons for pinned or grouped taskbar items, so unpinning and
-reopening a previously pinned shortcut may be necessary to observe updates.
+The build includes the application icon, author avatar, all 252 bundled country
+flags, and the Tcl/Tk runtime required by the standalone Windows executable.
 
 ## Privacy
 
-The program sends a lookup request to `https://ipwho.is/` to obtain the public
-address and approximate location. Locally it stores widget settings and up to
-50 IP-change entries. Use **IP change history → Clear history** to remove them.
-
-## Development
-
-See [Architecture](docs/ARCHITECTURE.md) for module boundaries, data flow, and
-safe extension points.
+To determine your public IP and approximate location, the app contacts
+`https://ipwho.is/`. Locally it stores only its settings and up to 50 IP-change
+entries. The history can be cleared at any time from the application menu.
 
 ## License
 
 This project is released under the [MIT License](LICENSE).
+
+## Development
+
+See [Architecture](docs/ARCHITECTURE.md) for the modular design, storage model,
+Windows integration, and extension points.
