@@ -31,7 +31,7 @@ echo [3/3] Creating the Windows installer...
 if errorlevel 1 goto :error
 
 echo.
-echo Done: installer\IPInfoWidget-Setup-1.4.1.exe
+echo Done: installer\IPInfoWidget-Setup-2.0.0.exe
 echo This is the end-user installer. Python is not required.
 pause
 exit /b 0

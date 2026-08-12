@@ -2,7 +2,7 @@
 ; Najpierw uruchom build_exe.bat, który utworzy dist\MyIPWidget.exe.
 
 #define MyAppName "IP Info Widget"
-#define MyAppVersion "1.4.1"
+#define MyAppVersion "2.0.0"
 #define MyAppPublisher "IP Info Widget"
 #define MyAppExeName "IPInfoWidget.exe"
 
