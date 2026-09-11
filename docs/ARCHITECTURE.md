@@ -134,5 +134,5 @@ all layouts, queued manual recovery, topmost, simulated restart and re-pinning.
 They do not substitute for physical multi-monitor, DPI or RDP testing.
 
 The maintainer confirmed successful physical validation of the 1.5.0 test EXE
-built from the position-fix commit. Version 1.5.1 is a bug-fix release preparation;
-its final EXE and installer have not yet been built or published.
+built from the position-fix commit. This confirmation applies to that validation
+EXE; it is not a claim of physical testing of the final 1.5.1 release binaries.

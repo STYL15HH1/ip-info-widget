@@ -8,8 +8,8 @@ and country changed without opening a browser.
 
 ![Normal mode showing Romania and Bucharest](docs/screenshots/normal-mode-romania.png)
 
-**Version 1.5.1 is being prepared.** Release binaries are not yet published.
-Public IP addresses are redacted in the screenshots below; the interface is unchanged.
+**[Download version 1.5.1](https://github.com/STYL15HH1/ip-info-widget/releases/tag/v1.5.1)** — installer and standalone EXE.
+Public exit IP addresses are redacted in the screenshots; the interface is unchanged.
 
 ## Key features
 
@@ -60,14 +60,14 @@ the current run; short-lived changes between checks may not be observed.
 
 ## Installation
 
-The planned installer is **`IPInfoWidget-Setup-1.5.1.exe`**. Once published on
-[GitHub Releases](https://github.com/STYL15HH1/ip-info-widget/releases), run it to
-install under Program Files. Administrator permission is required; a desktop
-shortcut is optional. End users do not need Python.
+Download **[IPInfoWidget-Setup-1.5.1.exe](https://github.com/STYL15HH1/ip-info-widget/releases/download/v1.5.1/IPInfoWidget-Setup-1.5.1.exe)**
+from [GitHub Releases](https://github.com/STYL15HH1/ip-info-widget/releases/tag/v1.5.1)
+and run it to install under Program Files. Administrator permission is required;
+a desktop shortcut is optional. End users do not need Python.
 
-The standalone **`IPInfoWidget-1.5.1.exe`** may also be offered as a release asset.
+Alternatively, download the standalone
+**[IPInfoWidget-1.5.1.exe](https://github.com/STYL15HH1/ip-info-widget/releases/download/v1.5.1/IPInfoWidget-1.5.1.exe)**.
 Without `--portable`, it uses the same per-user storage as an installed copy.
-Neither 1.5.1 binary is available as part of this preparation step.
 
 ## Portable mode
 

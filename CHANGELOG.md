@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.5.1 - Unreleased
+## v1.5.1 - 2026-09-11
 
 ### Fixed
 
@@ -17,7 +17,7 @@
   layouts, missing monitors, manual recovery, restart and re-pinning.
 - The maintainer confirmed successful physical Windows validation of the fix
   from commit `0b6be2b`; the original invisible-widget issue was resolved on the
-  affected machine. Version 1.5.1 binaries still require a release build.
+  affected machine. This physical validation used the pre-release validation EXE.
 
 ### Documentation
 
