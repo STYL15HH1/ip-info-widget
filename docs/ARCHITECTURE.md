@@ -1,4 +1,4 @@
-# IP Info Widget 1.5 Architecture
+# IP Info Widget 1.5.1 Architecture
 
 ## Project map
 
@@ -21,7 +21,7 @@ ui/
   menu.py              Widget context menu
 windows/
   taskbar.py           Native dynamic taskbar HICON lifecycle
-  tray.py              Static application tray icon and its callbacks
+  tray.py              Dynamic country tray icon and queued callbacks
   notifications.py     Windows toast notifications
   autostart.py         Current-user Run registry entry
   monitors.py          Windows monitor enumeration and placement
@@ -64,15 +64,16 @@ when preparing a new release.
 
 The resource directory is separate from data storage. In a PyInstaller one-file
 application it resolves to `_MEIPASS`, so bundled icons and flags are found while
-portable data remains alongside the executable. Portable mode disables autostart
-because Windows Run entries with removable-drive paths are not dependable.
+portable data remains alongside the executable. Portable mode disables the autostart preference and Settings control because
+removable-drive paths are not dependable. It does not remove existing Run entries.
 
 ## Display layouts
 
 Each class in `ui.layouts` receives the same `DisplayData` and decides only how
 to display it. `CompactLayout` contains only flag and IP; `NormalLayout` displays
-the familiar country/details card; `MonitoringLayout` adds the already available
-city, ISP, and optional ping output. It does not make unsupported claims about
+the familiar country/details card; `MonitoringLayout` adds city, ISP and optional
+ping rows. The city/ISP settings still apply; absent values display as not
+available. A refresh without ping displays not tested. It does not make unsupported claims about
 VPN detection, IPv6, DNS, reputation, or threats.
 
 Mode changes rebuild only the contents of the card and preserve the top-level
@@ -123,3 +124,15 @@ or `core/settings.py`; Windows APIs remain under `windows/`; and a new visual
 mode belongs in `ui/layouts.py`. IPv6, DNS tests, ASN data, VPN detection,
 reputation, and threat intelligence can follow those boundaries without growing
 the entry point again.
+
+## Positioning validation
+
+Run `py -B -m unittest discover -s tests -v` on Windows with Tkinter available.
+The 13 tests exercise real Tk windows with synthetic work areas and isolated
+settings, covering pin-first startup, missing-pin fallback, negative coordinates,
+all layouts, queued manual recovery, topmost, simulated restart and re-pinning.
+They do not substitute for physical multi-monitor, DPI or RDP testing.
+
+The maintainer confirmed successful physical validation of the 1.5.0 test EXE
+built from the position-fix commit. Version 1.5.1 is a bug-fix release preparation;
+its final EXE and installer have not yet been built or published.

@@ -19,3 +19,6 @@ settings.json
 ip-history.json
 .vscode/
 .idea/
+
+# Historical source archive stays in the original local checkout
+/ip-info-widget-1.5.0.zip

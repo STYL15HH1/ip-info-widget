@@ -1,11 +1,11 @@
-; Instalator Inno Setup dla My IP Widget.
-; Najpierw uruchom build_exe.bat, który utworzy dist\MyIPWidget.exe.
+; IP Info Widget installer.
+; Run build_exe.bat first to create dist\IPInfoWidget-<version>.exe.
 
 #define MyAppName "IP Info Widget"
 ; build_exe.bat forwards core.version.APP_VERSION to this script.
 ; The fallback permits a direct compile when Python is unavailable.
 #ifndef MyAppVersion
-  #define MyAppVersion "1.5.0"
+  #define MyAppVersion "1.5.1"
 #endif
 #define MyAppPublisher "IP Info Widget"
 #define MyAppExeName "IPInfoWidget-" + MyAppVersion + ".exe"

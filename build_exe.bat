@@ -11,7 +11,7 @@ if %ERRORLEVEL% EQU 0 (
 cd /d "%~dp0"
 
 for /f "usebackq delims=" %%I in (`%PYTHON% -c "from core.version import APP_VERSION; print(APP_VERSION)"`) do set "APP_VERSION=%%I"
-if not defined APP_VERSION set "APP_VERSION=1.5.0"
+if not defined APP_VERSION set "APP_VERSION=1.5.1"
 
 echo [1/3] Installing build tools...
 %PYTHON% -m pip install --upgrade pip

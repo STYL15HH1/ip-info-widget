@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v1.5.1 - Unreleased
 
 ### Fixed
 
@@ -10,6 +10,19 @@
   preserving always-on-top and explicitly clearing the monitor pin for durable recovery.
 - Preserve monitor-pin priority at startup, with safe primary placement when the
   pinned monitor is unavailable.
+
+### Validation
+
+- Added 13 positioning regression tests, including negative coordinates, all three
+  layouts, missing monitors, manual recovery, restart and re-pinning.
+- The maintainer confirmed successful physical Windows validation of the fix
+  from commit `0b6be2b`; the original invisible-widget issue was resolved on the
+  affected machine. Version 1.5.1 binaries still require a release build.
+
+### Documentation
+
+- Rebuilt the public README with approved screenshots and public-IP redaction.
+- Updated current version/build references while preserving historical snapshots.
 
 ## v1.5.0 - 2026-08-12
 
