@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Validate saved and rebuilt widget geometry against active monitor work areas,
+  preserving valid negative coordinates and recovering off-screen positions.
+- Add a queued tray action to restore the widget to the primary monitor while
+  preserving always-on-top and explicitly clearing the monitor pin for durable recovery.
+- Preserve monitor-pin priority at startup, with safe primary placement when the
+  pinned monitor is unavailable.
+
 ## v1.5.0 - 2026-08-12
 
 ### Added

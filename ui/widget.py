@@ -24,7 +24,7 @@ from ui.layouts import DisplayData, Theme, WidgetLayout, create_layout
 from ui.menu import build_context_menu
 from ui.settings_window import open_settings_window
 from windows.autostart import set_autostart
-from windows.monitors import list_monitors, selected_monitor
+from windows.monitors import list_monitors, primary_monitor, rectangle_visible, safe_position, selected_monitor
 from windows.notifications import send_ip_change_notification
 from windows.taskbar import TaskbarIcon
 from windows.tray import TrayController
@@ -86,6 +86,7 @@ class IPInfoWidget:
             lambda: self._queue.put(("hide", None)),
             lambda: self._queue.put(("refresh", None)),
             lambda: self._queue.put(("quit", None)),
+            lambda: self._queue.put(("restore_primary", None)),
         )
         self.rebuild_layout()
         self.restore_position()
@@ -97,6 +98,7 @@ class IPInfoWidget:
         self.root.mainloop()
 
     def rebuild_layout(self) -> None:
+        had_layout = self.layout is not None
         x, y = self.root.winfo_x(), self.root.winfo_y()
         for child in self.card.winfo_children():
             child.destroy()
@@ -112,29 +114,69 @@ class IPInfoWidget:
             update_taskbar=False,
         )
         self.root.update_idletasks()
-        if x >= 0 and y >= 0:
-            self.root.geometry(f"+{x}+{y}")
+        if had_layout:
+            self._validate_position(x, y)
 
     @property
     def theme(self) -> Theme:
         return THEMES.get(str(self.settings.data.get("theme")), THEMES["dark"])
+
+    def _widget_size(self) -> tuple[int, int]:
+        self.root.update_idletasks()
+        return self.root.winfo_width(), self.root.winfo_height()
+
+    def _place_position(self, x: int, y: int, save: bool = False) -> None:
+        # A leading + with a signed value denotes an absolute virtual-desktop
+        # coordinate in Tk; a bare - offset would anchor to the screen edge.
+        self.root.geometry(f"+{x}+{y}")
+        if save:
+            self.settings.data.update({"x": x, "y": y})
+            self.settings.save()
+
+    def _validate_position(self, x: int, y: int) -> None:
+        width, height = self._widget_size()
+        monitors = list_monitors()
+        if rectangle_visible(x, y, width, height, monitors):
+            self._place_position(x, y)
+            return
+        primary = primary_monitor(monitors)
+        if primary is not None:
+            self._place_position(*safe_position(primary, width, height), save=True)
+        else:
+            # Enumeration failure is not evidence that saved coordinates are
+            # invalid. Preserve them rather than persisting a guessed origin.
+            self._place_position(x, y)
 
     def restore_position(self) -> None:
         x, y = self.settings.data.get("x"), self.settings.data.get("y")
         if self.settings.data.get("monitor_device"):
             self.move_to_selected_monitor()
         elif isinstance(x, int) and isinstance(y, int):
-            self.root.geometry(f"+{x}+{y}")
+            self._validate_position(x, y)
         else:
-            self.root.geometry(f"+{self.root.winfo_screenwidth() - 265}+55")
+            primary = primary_monitor()
+            if primary is not None:
+                self._place_position(*safe_position(primary, *self._widget_size()), save=True)
+
+    def restore_to_primary_monitor(self) -> None:
+        primary = primary_monitor()
+        self.root.deiconify()
+        width, height = self._widget_size()
+        if primary is not None:
+            self.settings.data["monitor_device"] = None
+            self._place_position(*safe_position(primary, width, height), save=True)
+        self.root.attributes("-topmost", bool(self.settings.data["always_on_top"]))
+        self.root.lift()
 
     def move_to_selected_monitor(self) -> None:
-        monitor = selected_monitor(self.settings.data.get("monitor_device"))
-        if not monitor:
-            return
-        self.root.update_idletasks()
-        width = self.root.winfo_reqwidth()
-        self.root.geometry(f"+{monitor['right'] - width - 22}+{monitor['top'] + 22}")
+        monitor = selected_monitor(self.settings.data.get("monitor_device"), fallback_to_primary=False)
+        missing = monitor is None
+        if missing:
+            # Keep the configured pin so it works again when the display returns.
+            monitor = primary_monitor()
+        if monitor is not None:
+            width, height = self._widget_size()
+            self._place_position(*safe_position(monitor, width, height), save=missing)
 
     def start_drag(self, event: tk.Event) -> None:
         self._drag_offset = (event.x_root - self.root.winfo_x(), event.y_root - self.root.winfo_y())
@@ -209,6 +251,8 @@ class IPInfoWidget:
                     self.hide()
                 elif action == "refresh":
                     self.refresh_now()
+                elif action == "restore_primary":
+                    self.restore_to_primary_monitor()
                 elif action == "quit":
                     self.quit()
         except queue.Empty:

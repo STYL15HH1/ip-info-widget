@@ -62,6 +62,21 @@ status. It only displays information the application has actually retrieved.
 | **Start widget with Windows** | Start automatically after signing in to Windows. |
 | **Always on top** | Keep the widget above other windows, or allow it to be covered normally. |
 
+Saved positions and layout changes are checked against current monitor work areas.
+At least 50 horizontal and 30 vertical pixels must remain visible on one display
+(or the full dimension for a smaller widget). Valid negative coordinates are
+preserved; off-screen positions are moved safely to the primary monitor and only
+the repaired coordinates are saved when unpinned. At startup, a configured monitor
+pin takes priority over saved coordinates. If that display is missing, placement
+falls back safely to primary while retaining the pin for when the display returns.
+
+Use **Restore widget to primary monitor** in the tray menu to recover a hidden or
+off-screen widget. This clears the monitor pin and saves the primary position,
+so recovery survives restart and the widget stays unpinned until you select a
+monitor again in Settings. Always-on-top is preserved. If no primary monitor can
+be discovered, the pin and coordinates are retained instead of saving a guessed
+position.
+
 The widget can be dragged to any position. Its position, appearance, display
 mode, refresh preferences, and history are saved automatically.
 

@@ -14,9 +14,9 @@ except ImportError:
 
 
 class TrayController:
-    def __init__(self, app_name: str, icon_path: Path, show: Callable[[], None], hide: Callable[[], None], refresh: Callable[[], None], quit_app: Callable[[], None]) -> None:
+    def __init__(self, app_name: str, icon_path: Path, show: Callable[[], None], hide: Callable[[], None], refresh: Callable[[], None], quit_app: Callable[[], None], restore_primary: Callable[[], None]) -> None:
         self.app_name = app_name
-        self._callbacks = {"show": show, "hide": hide, "refresh": refresh, "quit": quit_app}
+        self._callbacks = {"show": show, "hide": hide, "refresh": refresh, "quit": quit_app, "restore_primary": restore_primary}
         self.icon = None
         self._image = self._load_icon(icon_path)
 
@@ -42,6 +42,7 @@ class TrayController:
     def _menu(self):
         return pystray.Menu(
             pystray.MenuItem("Show widget", lambda *_: self._callbacks["show"]()),
+            pystray.MenuItem("Restore widget to primary monitor", lambda *_: self._callbacks["restore_primary"]()),
             pystray.MenuItem("Hide widget", lambda *_: self._callbacks["hide"]()),
             pystray.MenuItem("Refresh now", lambda *_: self._callbacks["refresh"]()),
             pystray.Menu.SEPARATOR,

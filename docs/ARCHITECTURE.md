@@ -76,8 +76,23 @@ city, ISP, and optional ping output. It does not make unsupported claims about
 VPN detection, IPv6, DNS, reputation, or threats.
 
 Mode changes rebuild only the contents of the card and preserve the top-level
-window position. Monitor pinning and the theme/opacity settings are reapplied by
-the controller.
+window position. The controller validates the sized rectangle against current `rcWork` areas,
+including negative virtual-desktop coordinates. `primary_monitor`,
+`rectangle_visible`, and `safe_position` in `windows/monitors.py` provide shared
+placement rules. Startup gives a configured monitor pin priority over saved x/y.
+`selected_monitor(..., fallback_to_primary=False)` distinguishes a missing pin
+from an available display; missing pins recover to primary and save repaired x/y
+while retaining the device preference. Unpinned startup validates saved x/y.
+Invalid coordinates and invalid positions after a layout rebuild recover to the
+primary work area. Automatic recovery saves only x/y.
+
+The tray's `Restore widget to primary monitor` callback enqueues `restore_primary`.
+The Tk queue consumer deiconifies, places, lifts, and reapplies the configured
+topmost value. Manual recovery explicitly clears `monitor_device` and saves it
+together with the new x/y, so the recovered position survives restart. Selecting
+a monitor again in Settings restores normal pinning. If no primary monitor can
+be discovered, manual recovery reveals the window but retains its pin and
+coordinates; it does not persist a guessed position.
 
 ## Windows icons
 
